@@ -1,9 +1,9 @@
 :root {
-    --bg-color: #0f172a; /* Moderner Slate-Hintergrund für die Seite */
+    --bg-color: #0f172a;
     --card-bg: #ffffff;
     --text-main: #1e293b;
     --text-muted: #64748b;
-    --primary: #4f46e5; /* Edles Indigo */
+    --primary: #4f46e5;
     --primary-hover: #4338ca;
     --success-bg: #f0fdf4;
     --success-border: #bbf7d0;
@@ -11,8 +11,6 @@
     --error-bg: #fef2f2;
     --error-border: #fecaca;
     --error-text: #991b1b;
-    --code-bg: #1e293b;
-    --code-text: #e2e8f0;
 }
 
 body {
@@ -59,6 +57,25 @@ header p {
     justify-content: space-between;
 }
 
+/* Badges für Binnendifferenzierung */
+.badge-container {
+    margin-bottom: 10px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.badge-m { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; } /* Mindeststandard */
+.badge-s { background-color: #fef08a; color: #854d0e; border: 1px solid #fde047; } /* Regelstandard */
+.badge-e { background-color: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; } /* Expertenstandard */
+.badge-test { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; } /* Test */
+
 .slide-content h2 {
     color: var(--primary);
     font-size: 1.3rem;
@@ -72,6 +89,42 @@ header p {
     line-height: 1.5;
 }
 
+/* Styling für Erklärungen und Beispiele */
+.info-box {
+    background-color: #f0f9ff;
+    border-left: 4px solid #0284c7;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 4px 8px 8px 4px;
+    font-size: 0.95rem;
+    color: #0c4a6e;
+    line-height: 1.5;
+}
+
+.info-box strong {
+    color: #0369a1;
+}
+
+code {
+    background-color: #e2e8f0;
+    color: #be185d;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 0.9em;
+}
+
+.example-box {
+    background-color: #ffffff;
+    border: 1px dashed #cbd5e1;
+    padding: 8px 12px;
+    margin-top: 8px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    color: #334155;
+    display: inline-block;
+}
+
 .editor-label {
     font-size: 0.75rem;
     color: var(--text-muted);
@@ -83,25 +136,27 @@ header p {
     margin-bottom: 6px;
 }
 
-.code-textarea {
+/* Code-Editor (CodeFlask) Container */
+.code-editor-container {
+    position: relative;
     width: 100%;
-    background: var(--code-bg);
-    color: var(--code-text);
-    padding: 14px;
-    border-radius: 8px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.95rem;
+    height: 250px;
     border: 1px solid #334155;
-    resize: vertical;
-    box-sizing: border-box;
-    line-height: 1.4;
+    border-radius: 8px;
+    background: #1e293b;
+    margin: 10px 0;
+    overflow: hidden;
 }
 
-.code-textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-}
+/* Syntax Highlighting Farben für CodeFlask (Dark Theme) */
+.codeflask { background: #1e293b !important; font-family: ui-monospace, monospace; font-size: 0.95rem; }
+.codeflask .codeflask__lines { background: #0f172a !important; color: #64748b !important; }
+.token.tag, .token.keyword { color: #569cd6 !important; }
+.token.punctuation { color: #808080 !important; }
+.token.attr-name { color: #9cdcfe !important; }
+.token.attr-value, .token.string { color: #ce9178 !important; }
+.token.comment { color: #6a9955 !important; font-style: italic !important; }
+.token.doctype { color: #c586c0 !important; }
 
 .preview-box {
     border: 2px dashed #cbd5e1;
@@ -122,9 +177,7 @@ header p {
     font-weight: 700;
 }
 
-.check-container {
-    margin-top: 15px;
-}
+.check-container { margin-top: 15px; }
 
 .check-btn {
     background-color: var(--primary);
@@ -138,9 +191,7 @@ header p {
     transition: background-color 0.2s;
 }
 
-.check-btn:hover {
-    background-color: var(--primary-hover);
-}
+.check-btn:hover { background-color: var(--primary-hover); }
 
 .feedback-box {
     margin-top: 12px;
@@ -151,17 +202,8 @@ header p {
     display: none;
 }
 
-.feedback-success {
-    background-color: var(--success-bg);
-    border: 1px solid var(--success-border);
-    color: var(--success-text);
-}
-
-.feedback-error {
-    background-color: var(--error-bg);
-    border: 1px solid var(--error-border);
-    color: var(--error-text);
-}
+.feedback-success { background-color: var(--success-bg); border: 1px solid var(--success-border); color: var(--success-text); }
+.feedback-error { background-color: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); }
 
 .solution-container {
     margin-top: 20px;
@@ -170,7 +212,7 @@ header p {
 }
 
 .solution-btn {
-    background-color: #059669; /* Frisches Grün */
+    background-color: #059669;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -181,9 +223,7 @@ header p {
     transition: background-color 0.2s;
 }
 
-.solution-btn:hover {
-    background-color: #047857;
-}
+.solution-btn:hover { background-color: #047857; }
 
 .solution-box {
     background: #f0fdf4;
@@ -220,17 +260,8 @@ header p {
     transition: all 0.2s;
 }
 
-.nav-btn:hover:not(:disabled) {
-    background-color: #f1f5f9;
-    border-color: #94a3b8;
-}
-
-.nav-btn:disabled {
-    background-color: #f8fafc;
-    color: #cbd5e1;
-    border-color: #e2e8f0;
-    cursor: not-allowed;
-}
+.nav-btn:hover:not(:disabled) { background-color: #f1f5f9; border-color: #94a3b8; }
+.nav-btn:disabled { background-color: #f8fafc; color: #cbd5e1; border-color: #e2e8f0; cursor: not-allowed; }
 
 .summary-list {
     text-align: left;
