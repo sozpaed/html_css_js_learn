@@ -35,7 +35,7 @@ const slides = [
     {
         title: "Schritt 4: Struktur durch Unterüberschriften",
         level: "Regelstandard (R)",
-        badgeClass: "badge-s",
+        badgeClass: "badge-r",
         description: "Strukturiere den Lebenslauf weiter. Füge eine Unterüberschrift <code>&lt;h2&gt;</code> (z. B. 'Meine Hobbys') unter deinem Profil hinzu.",
         explanation: "Überschriften gibt es von <code>&lt;h1&gt;</code> bis <code>&lt;h6&gt;</code>. Das <code>&lt;h2&gt;</code>-Element ist die direkte Unterüberschrift der Hauptüberschrift. Beachte die korrekte Reihenfolge (Hierarchie) für eine gute Struktur.",
         example: "<code>&lt;h2&gt;Meine Hobbys&lt;/h2&gt;</code>",
@@ -46,7 +46,7 @@ const slides = [
     {
         title: "Schritt 5: Eine Aufzählung hinzufügen",
         level: "Regelstandard (R)",
-        badgeClass: "badge-s",
+        badgeClass: "badge-r",
         description: "Erstelle unter deiner neuen Überschrift eine ungeordnete Liste <code>&lt;ul&gt;</code> mit mindestens zwei Listenpunkten <code>&lt;li&gt;</code>.",
         explanation: "Eine Liste besteht immer aus einem Rahmen-Element <code>&lt;ul&gt;</code> (unordered list). Innerhalb dieses Rahmens wird jeder einzelne Aufzählungspunkt mit einem <code>&lt;li&gt;</code>-Element (list item) umschlossen.",
         example: "<code>&lt;ul&gt; \n  &lt;li&gt;Lesen&lt;/li&gt;\n  &lt;li&gt;Sport&lt;/li&gt;\n &lt;/ul&gt;</code>",
