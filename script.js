@@ -34,7 +34,7 @@ const slides = [
     },
     {
         title: "Schritt 4: Struktur durch Unterüberschriften",
-        level: "Regelstandard (S)",
+        level: "Regelstandard (R)",
         badgeClass: "badge-s",
         description: "Strukturiere den Lebenslauf weiter. Füge eine Unterüberschrift <code>&lt;h2&gt;</code> (z. B. 'Meine Hobbys') unter deinem Profil hinzu.",
         explanation: "Überschriften gibt es von <code>&lt;h1&gt;</code> bis <code>&lt;h6&gt;</code>. Das <code>&lt;h2&gt;</code>-Element ist die direkte Unterüberschrift der Hauptüberschrift. Beachte die korrekte Reihenfolge (Hierarchie) für eine gute Struktur.",
@@ -45,11 +45,11 @@ const slides = [
     },
     {
         title: "Schritt 5: Eine Aufzählung hinzufügen",
-        level: "Regelstandard (S)",
+        level: "Regelstandard (R)",
         badgeClass: "badge-s",
         description: "Erstelle unter deiner neuen Überschrift eine ungeordnete Liste <code>&lt;ul&gt;</code> mit mindestens zwei Listenpunkten <code>&lt;li&gt;</code>.",
         explanation: "Eine Liste besteht immer aus einem Rahmen-Element <code>&lt;ul&gt;</code> (unordered list). Innerhalb dieses Rahmens wird jeder einzelne Aufzählungspunkt mit einem <code>&lt;li&gt;</code>-Element (list item) umschlossen.",
-        example: "<code>&lt;ul&gt;\n  &lt;li&gt;Lesen&lt;/li&gt;\n  &lt;li&gt;Sport&lt;/li&gt;\n</ul></code>",
+        example: "<code>&lt;ul&gt; \n  &lt;li&gt;Lesen&lt;/li&gt;\n  &lt;li&gt;Sport&lt;/li&gt;\n &lt;/ul&gt;</code>",
         code: `<!DOCTYPE html>\n<html lang="de">\n<head>\n  <meta charset="utf-8">\n  <title>Mein Lebenslauf</title>\n</head>\n<body>\n  <h1>Dein Name</h1>\n  <p>Mein Profil.</p>\n  <h2>Meine Hobbys</h2>\n  <!-- Füge hier ul und li ein -->\n\n</body>\n</html>`,
         solution: `<!DOCTYPE html>\n<html lang="de">\n<head>\n  <meta charset="utf-8">\n  <title>Mein Lebenslauf</title>\n</head>\n<body>\n  <h1>Dein Name</h1>\n  <p>Mein Profil.</p>\n  <h2>Meine Hobbys</h2>\n  <ul>\n    <li>Lesen</li>\n    <li>Programmieren</li>\n  </ul>\n</body>\n</html>`,
         rules: [{ tag: "h2" }, { tag: "ul" }, { tag: "li" }]
