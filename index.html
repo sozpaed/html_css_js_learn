@@ -1,36 +1,70 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informatik – Interaktiver Lebenslauf</title>
-    <!-- Einbindung der modernen Stylesheet-Datei -->
-    <link rel="stylesheet" href="style.css">
-    <!-- CodeFlask für das Syntax-Highlighting im Editor -->
-    <script src="https://unpkg.com/codeflask/build/codeflask.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lernpfad HTML, CSS und JavaScript – Mein Lebenslauf</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-    <header>
-        <h1>Marienschule Offenbach – Informatik</h1>
-        <p>Modul 1: Struktur, Aufbau und Formatierungen</p>
-    </header>
-
-    <main>
-        <!-- Hier werden die jeweiligen Folien / Schritte dynamisch per JavaScript eingefügt -->
-        <section id="slide-container" class="card">
-            <!-- Inhalt wird zur Laufzeit geladen -->
-        </section>
-
-        <!-- Navigationsleiste unter der Karte -->
-        <div class="navigation">
-            <button id="prev-btn" class="nav-btn" onclick="prevSlide()">← Zurück</button>
-            <span id="slide-counter" style="font-weight: 600; font-size: 0.9rem; color: #64748b;">Schritt 1</span>
-            <button id="next-btn" class="nav-btn" onclick="nextSlide()">Nächster Schritt →</button>
+  <a class="skip" href="#main">Zum Inhalt springen</a>
+  <header>
+    <h1>Mein Lebenslauf im Web</h1>
+    <p>Lernpfad HTML · CSS · JavaScript</p>
+  </header>
+  <div class="layout">
+    <aside>
+      <p><label for="nachname">Dein Nachname (für den Dateinamen)</label>
+      <input id="nachname" autocomplete="off"></p>
+      <nav id="nav" aria-label="Lernpfad"></nav>
+    </aside>
+    <main id="main" tabindex="-1">
+      <p class="mod" id="modTitle"></p>
+      <p><span id="level" class="badge"></span></p>
+      <h2 id="stepTitle"></h2>
+      <section id="lernen">
+        <div id="info" class="card"></div>
+        <div id="aufgabe" class="card task"></div>
+        <div class="work">
+          <div>
+            <label for="editor"><strong>Dein Code</strong></label>
+            <div class="ed"><pre id="hl" aria-hidden="true"><code id="hlcode"></code></pre><textarea id="editor" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea></div>
+            <p id="carry" class="note" hidden>↻ Dein Code aus der vorigen Folie ist übernommen. Alles Bisherige bleibt Teil der Prüfung.</p>
+          </div>
+          <div>
+            <p><strong id="vl">Vorschau</strong></p>
+            <iframe id="vorschau" title="Vorschau deiner Seite" sandbox=""></iframe>
+          </div>
         </div>
+        <p class="buttons">
+          <button type="button" id="pruefen">Prüfen</button>
+          <button type="button" id="zeigen">Musterlösung</button>
+          <button type="button" id="download">Datei speichern</button>
+          <button type="button" id="reset">Zurücksetzen</button>
+        </p>
+        <p id="status" role="status" aria-live="polite"></p>
+        <ul id="ergebnis" class="checks"></ul>
+        <details id="loesung"><summary>Musterlösung (versuche es zuerst allein!)</summary>
+          <pre><code id="loesungCode"></code></pre></details>
+      </section>
+      <section id="testSec" hidden>
+        <p class="card">Beantworte alle Fragen. Ab 75 % richtig ist der Test bestanden.</p>
+        <form id="testForm" onsubmit="return false"></form>
+        <p><button type="button" id="auswerten">Auswerten</button></p>
+        <div id="testErg" role="status" aria-live="polite"></div>
+      </section>
+      <section id="reflexion" hidden>
+        <div id="reflItems"></div>
+        <p><label for="reflA">Diese Punkte haben mein Interesse geweckt:</label>
+        <textarea id="reflA" rows="3"></textarea></p>
+        <p><label for="reflB">Das möchte ich beim nächsten Modul besser machen:</label>
+        <textarea id="reflB" rows="3"></textarea></p>
+      </section>
+      <div id="folien" class="folien" role="navigation" aria-label="Folien"></div>
     </main>
-
-    <!-- Einbindung der Logik-Datei am Ende des Bodys -->
-    <script src="script.js"></script>
+  </div>
+  <footer><p>Lernpfad HTML &amp; CSS · Deine Eingaben bleiben in diesem Browser gespeichert.</p></footer>
+  <script src="js/modul1.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
