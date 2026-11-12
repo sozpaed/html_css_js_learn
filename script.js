@@ -1,32 +1,111 @@
 const slides = [
     {
         title: "Schritt 1: Der Name als Hauptüberschrift",
-        description: "Jeder Lebenslauf beginnt mit dem Namen im Kopf. Verwende das <b><h1></b>-Element, um deinen vollständigen Namen als Hauptüberschrift festzulegen.",
+        description: "Jeder Lebenslauf beginnt mit dem Namen im Kopf. Verwende das <b><h1></b>-Element, um deinen eigenen Namen als Hauptüberschrift festzulegen.",
         code: "<h1>Dein Name</h1>",
-        solution: "<h1>Max Mustermann</h1>"
+        solution: "<h1>Max Mustermann</h1>",
+        rules: [
+            { tag: "h1", forbidden: ["Dein Name", "..."] }
+        ]
     },
     {
         title: "Schritt 2: Wohnort und Hervorhebung",
-        description: "Nutze das <b><b></b>-Element, um deinen Wohnort fett zu markieren, und das <b><i></b>-Element für deine Berufsbezeichnung kursiv.",
+        description: "Nutze das <b><b></b>-Element für deinen Wohnort (fett) und das <b><i></b>-Element für deinen aktuellen Status bzw. Beruf (kursiv).",
         code: "<b>Wohnort:</b> <i>Beruf</i>",
-        solution: "<b>Offenbach am Main</b> – <i>Schüler</i>"
+        solution: "<b>Offenbach am Main</b> – <i>Schülerin</i>",
+        rules: [
+            { tag: "b", forbidden: ["Wohnort:", "..."] },
+            { tag: "i", forbidden: ["Beruf", "..."] }
+        ]
     },
     {
         title: "Schritt 3: Das Kurzprofil (Absatz)",
-        description: "Füge mit dem <b><p></b>-Element einen kurzen, aussagekräftigen Textabsatz über deine Ziele oder Interessen im Lebenslauf ein.",
+        description: "Füge mit dem <b><p></b>-Element einen kurzen, eigenen Textabsatz über deine Ziele oder Interessen ein.",
         code: "<p>Hier steht dein kurzer Beschreibungstext...</p>",
-        solution: "<p>Motivierter Lernender mit großem Interesse an Webentwicklung und Informatik.</p>"
+        solution: "<p>Motivierter Lernender mit großem Interesse an Webentwicklung und Informatik.</p>",
+        rules: [
+            { tag: "p", forbidden: ["Hier steht dein kurzer Beschreibungstext...", "..."] }
+        ]
     },
     {
         title: "Schritt 4: Strukturierte Abschnitte (Überschriften)",
-        description: "Gliedere deinen Lebenslauf mit einer Unterüberschrift <b><h2></b> für den nächsten Abschnitt (z. B. Berufserfahrung oder Bildungsweg).",
+        description: "Gliedere deinen Lebenslauf mit einer Unterüberschrift <b><h2></b> für den nächsten Abschnitt (z. B. Bildungsweg oder Kenntnisse).",
         code: "<h2>...</h2>",
-        solution: "<h2>Bildungsweg</h2>"
+        solution: "<h2>Bildungsweg</h2>",
+        rules: [
+            { tag: "h2", forbidden: ["..."] }
+        ]
     }
 ];
 
 let currentSlide = 0;
 const solvedStatus = new Array(slides.length).fill(false);
+
+// Prüft die formale HTML-Struktur anhand der definierten Regeln
+function validateHtmlStructure(rawCode, rules) {
+    const trimmedCode = rawCode.trim();
+
+    if (!trimmedCode) {
+        return { valid: false, message: "Das Eingabefeld ist leer." };
+    }
+
+    // Prüfen, ob spitzes Klammerpaar unvollständig ist (z. B. "<h1" ohne ">")
+    const openBrackets = (trimmedCode.match(/</g) || []).length;
+    const closeBrackets = (trimmedCode.match(/>/g) || []).length;
+    if (openBrackets !== closeBrackets) {
+        return { valid: false, message: "Syntaxfehler: Mindestens eine spitze Klammer (< oder >) wurde nicht geschlossen." };
+    }
+
+    // HTML-String über den Browser-Parser einlesen
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(trimmedCode, "text/html");
+
+    for (const rule of rules) {
+        const tag = rule.tag.toLowerCase();
+
+        // 1. Strenge Prüfung auf eröffnenden und schließenden Tag im Quelltext
+        const tagPattern = new RegExp(`<${tag}(\\s[^>]*)?>[\\s\\S]*?<\\/${tag}>`, "i");
+        if (!tagPattern.test(trimmedCode)) {
+            return {
+                valid: false,
+                message: `Formfehler: Das Element <${tag}> fehlt oder der schließende Tag </${tag}> wurde vergessen.`
+            };
+        }
+
+        // 2. Prüfung im geparsten DOM-Baum
+        const elements = doc.body.querySelectorAll(tag);
+        if (elements.length === 0) {
+            return {
+                valid: false,
+                message: `Das Element <${tag}> konnte nicht erkannt werden.`
+            };
+        }
+
+        // 3. Prüfung auf Inhalt und Platzhalter
+        let hasValidContent = false;
+        for (const el of elements) {
+            const text = el.textContent.trim();
+            if (text.length > 0) {
+                if (rule.forbidden && rule.forbidden.includes(text)) {
+                    return {
+                        valid: false,
+                        message: `Bitte ersetze den Platzhalter „${escapeHtml(text)}“ innerhalb von <${tag}> durch deine eigenen Angaben.`
+                    };
+                }
+                hasValidContent = true;
+            }
+        }
+
+        if (!hasValidContent) {
+            return {
+                valid: false,
+                message: `Das Element <${tag}> ist noch leer. Schreibe einen Text zwischen die Tags.`
+            };
+        }
+    }
+
+    return { valid: true, message: "Richtig! Die HTML-Tags sind formal korrekt gesetzt." };
+}
 
 function renderSlide() {
     const container = document.getElementById("slide-container");
@@ -57,7 +136,7 @@ function renderSlide() {
             <div id="feedback-box" class="feedback-box"></div>
 
             <div class="solution-container">
-                <button id="toggle-solution-btn" class="solution-btn">Lösung anzeigen</button>
+                <button id="toggle-solution-btn" class="solution-btn">Beispiel-Lösung anzeigen</button>
                 <div id="solution-box" class="solution-box">
                     ${escapeHtml(slide.solution)}
                 </div>
@@ -74,7 +153,7 @@ function renderSlide() {
 
     if (solvedStatus[currentSlide]) {
         feedbackBox.className = "feedback-box feedback-success";
-        feedbackBox.innerHTML = "Richtig! Dieser Baustein sitzt perfekt.";
+        feedbackBox.innerHTML = "Richtig! Dieser Baustein ist formal korrekt.";
         feedbackBox.style.display = "block";
     }
 
@@ -86,29 +165,27 @@ function renderSlide() {
     });
 
     checkBtn.addEventListener("click", () => {
-        const studentCode = textarea.value.trim();
-        const targetCode = slide.solution.trim();
-
+        const result = validateHtmlStructure(textarea.value, slide.rules);
         feedbackBox.style.display = "block";
 
-        if (studentCode === targetCode) {
+        if (result.valid) {
             feedbackBox.className = "feedback-box feedback-success";
-            feedbackBox.innerHTML = "Richtig! Ausgezeichnet umgesetzt.";
+            feedbackBox.innerHTML = result.message;
             solvedStatus[currentSlide] = true;
         } else {
             feedbackBox.className = "feedback-box feedback-error";
-            feedbackBox.innerHTML = "Noch nicht ganz passend. Prüfe die Tags oder den Inhalt.";
+            feedbackBox.innerHTML = result.message;
         }
     });
 
     toggleBtn.addEventListener("click", () => {
         if (solutionBox.style.display === "none" || solutionBox.style.display === "") {
             solutionBox.style.display = "block";
-            toggleBtn.innerText = "Lösung verbergen";
+            toggleBtn.innerText = "Beispiel-Lösung verbergen";
             toggleBtn.style.backgroundColor = "#64748b";
         } else {
             solutionBox.style.display = "none";
-            toggleBtn.innerText = "Lösung anzeigen";
+            toggleBtn.innerText = "Beispiel-Lösung anzeigen";
             toggleBtn.style.backgroundColor = "#059669";
         }
     });
