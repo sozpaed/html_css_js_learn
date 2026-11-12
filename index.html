@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatik – Interaktiver Lebenslauf</title>
+    <!-- Einbindung der modernen Stylesheet-Datei -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Marienschule Offenbach – Informatik</h1>
+        <p>Interaktiver Lernpfad: HTML & CSS im Lebenslauf</p>
+    </header>
+
+    <main>
+        <!-- Hier werden die jeweiligen Folien / Schritte dynamisch per JavaScript eingefügt -->
+        <section id="slide-container" class="card">
+            <!-- Inhalt wird zur Laufzeit geladen -->
+        </section>
+
+        <!-- Navigationsleiste unter der Karte -->
+        <div class="navigation">
+            <button id="prev-btn" class="nav-btn" onclick="prevSlide()">← Zurück</button>
+            <span id="slide-counter" style="font-weight: 600; font-size: 0.9rem; color: #64748b;">Schritt 1 von 4</span>
+            <button id="next-btn" class="nav-btn" onclick="nextSlide()">Nächster Schritt →</button>
+        </div>
+    </main>
+
+    <!-- Einbindung der Logik-Datei am Ende des Bodys -->
+    <script src="script.js"></script>
+</body>
+</html>
