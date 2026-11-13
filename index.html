@@ -14,7 +14,7 @@
   </header>
   <div class="layout">
     <aside>
-      <p><label for="nachname">Dein Nachname (für den Dateinamen)</label>
+      <p><label for="nachname">Dein Nachname (für den Dateinamen, ohne Leerzeichen)</label>
       <input id="nachname" autocomplete="off"></p>
       <nav id="nav" aria-label="Lernpfad"></nav>
     </aside>
@@ -42,6 +42,7 @@
           <button type="button" id="download">Datei speichern</button>
           <button type="button" id="reset">Zurücksetzen</button>
         </p>
+        <p id="dname" class="note"></p>
         <p id="status" role="status" aria-live="polite"></p>
         <ul id="ergebnis" class="checks"></ul>
         <details id="loesung"><summary>Musterlösung (versuche es zuerst allein!)</summary>

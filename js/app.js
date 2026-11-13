@@ -117,6 +117,7 @@
     if (st.test) return renderTest(st);
     $('#info').innerHTML = st.info; $('#aufgabe').innerHTML = st.aufgabe;
     $('#carry').hidden = fromIdx(cur[0], cur[1]) < 0;
+    showName();
     $('#editor').value = get('code:' + k, startCode(cur[0], cur[1]));
     $('#ergebnis').textContent = ''; $('#status').textContent = ''; $('#loesung').open = false; $('#loesungCode').textContent = '';
     paint(); preview();
@@ -189,6 +190,12 @@
     });
   }
 
+  function fname() {
+    var nm = ($('#nachname').value || '').replace(/[^A-Za-zÄÖÜäöüß-]/g, '') || 'Nachname', g = gOf(step());
+    return 'HC' + (cur[0] + 1) + '_' + nm + '_' + g + '_F' + (groupIdx(cur[0], g).indexOf(cur[1]) + 1) + '.html';
+  }
+  function showName() { $('#dname').textContent = 'Dateiname beim Speichern: ' + fname(); }
+
   var ta = $('#editor');
   ta.addEventListener('input', function () {
     set('code:' + key(cur[0], cur[1]), ta.value); paint();
@@ -203,13 +210,13 @@
     set('code:' + key(cur[0], cur[1]), startCode(cur[0], cur[1])); show();
   };
   $('#download').onclick = function () {
-    var nm = ($('#nachname').value || '').replace(/[^A-Za-zÄÖÜäöüß-]/g, '') || 'Nachname', a = document.createElement('a');
+    var a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([ta.value], { type: 'text/html' }));
-    a.download = 'HC' + (cur[0] + 1) + '-' + nm + '-' + step().level + '.html';
+    a.download = fname();
     document.body.appendChild(a); a.click();
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   };
   $('#nachname').value = get('nachname', '');
-  $('#nachname').oninput = function () { set('nachname', this.value); };
+  $('#nachname').oninput = function () { set('nachname', this.value); showName(); };
   show();
 })();
