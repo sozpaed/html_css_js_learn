@@ -29,7 +29,13 @@
           <div>
             <label for="editor"><strong>Dein Code</strong></label>
             <div class="ed"><pre id="hl" aria-hidden="true"><code id="hlcode"></code></pre><textarea id="editor" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea></div>
-            <p id="carry" class="note" hidden>↻ Dein Code aus der vorigen Folie ist übernommen. Alles Bisherige bleibt Teil der Prüfung.</p>
+            <p id="carry" class="note" hidden>↻ Dein bisheriger Lebenslauf ist übernommen. Alles Bisherige aus diesem Modul bleibt Teil der Prüfung.</p>
+            <div id="bildPanel" class="card" hidden>
+              <p><label for="bildInput"><strong>Eigenes Bild laden</strong></label> (bleibt in diesem Browser, wird nirgendwo hochgeladen)</p>
+              <input type="file" id="bildInput" accept="image/*">
+              <p id="bildInfo" class="note" role="status"></p>
+              <p>Bildnamen für <code>src</code>: <span id="bildListe"></span> <button type="button" id="bildLoeschen">Meine Bilder löschen</button></p>
+            </div>
           </div>
           <div>
             <p><strong id="vl">Vorschau</strong></p>
@@ -66,6 +72,7 @@
   </div>
   <footer><p>Lernpfad HTML &amp; CSS · Deine Eingaben bleiben in diesem Browser gespeichert.</p></footer>
   <script src="js/modul1.js"></script>
+  <script src="js/modul2.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

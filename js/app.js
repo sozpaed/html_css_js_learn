@@ -17,6 +17,8 @@
     return st.fromPrev && s > 0 ? s - 1 : -1;
   }
   function startCode(m, s) {
+    var fm = M[m].schritte[s].fromMod;
+    if (fm) return get('code:' + key(fm[0], fm[1]), M[fm[0]].schritte[fm[1]].loesung);
     var f = fromIdx(m, s);
     if (f >= 0) return get('code:' + key(m, f), M[m].schritte[f].loesung);
     return M[m].schritte[s].start;
@@ -49,7 +51,18 @@
     $('#hlcode').innerHTML = hl(ta.value);
     pre.scrollTop = ta.scrollTop; pre.scrollLeft = ta.scrollLeft;
   }
-  function preview() { $('#vorschau').srcdoc = $('#editor').value; }
+  /* Bilder: Beispielbild und eigene Bilder bleiben im Browser (localStorage) */
+  var SAMPLE = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#dfe6f3"/><circle cx="150" cy="115" r="55" fill="#8da2c8"/><path d="M45 285c0-65 48-105 105-105s105 40 105 105z" fill="#8da2c8"/></svg>');
+  var IMG = get('imgs', {});
+  function bilder() { return ['beispiel.svg'].concat(Object.keys(IMG)); }
+  function previewCode() {
+    var c = $('#editor').value, m = { 'beispiel.svg': SAMPLE }, k;
+    for (k in IMG) m[k] = IMG[k];
+    Object.keys(m).forEach(function (nm) { ['"', "'"].forEach(function (q) { c = c.split(q + nm + q).join(q + m[nm] + q); }); });
+    return c;
+  }
+  function preview() { $('#vorschau').srcdoc = previewCode(); }
+  function renderBilder() { $('#bildListe').textContent = bilder().join(', '); }
 
   function gOf(st) { return st.g || (st.reflexion ? 'X' : st.test ? 'T' : st.level); }
   var ORDER = ['M', 'R', 'E', 'T', 'X'];
@@ -116,7 +129,8 @@
     if (st.reflexion) return renderRefl(st);
     if (st.test) return renderTest(st);
     $('#info').innerHTML = st.info; $('#aufgabe').innerHTML = st.aufgabe;
-    $('#carry').hidden = fromIdx(cur[0], cur[1]) < 0;
+    $('#carry').hidden = fromIdx(cur[0], cur[1]) < 0 && !st.fromMod;
+    $('#bildPanel').hidden = !st.bilder; renderBilder();
     showName();
     $('#editor').value = get('code:' + k, startCode(cur[0], cur[1]));
     $('#ergebnis').textContent = ''; $('#status').textContent = ''; $('#loesung').open = false; $('#loesungCode').textContent = '';
@@ -124,16 +138,16 @@
   }
 
   function pruefen() {
-    var st = step(), c = $('#editor').value, d = new DOMParser().parseFromString(c, 'text/html'), all = true, ul = $('#ergebnis');
+    var st = step(), c = $('#editor').value, d = new DOMParser().parseFromString(c, 'text/html'), all = true, ul = $('#ergebnis'), ctx = { bilder: bilder() };
     ul.textContent = '';
     function line(ok, t) {
       var li = document.createElement('li'); li.className = ok ? 'ok' : 'fail';
       li.textContent = (ok ? '✓ ' : '✗ ') + t; ul.appendChild(li); if (!ok) all = false;
     }
-    st.checks.forEach(function (ch) { var ok = false; try { ok = !!ch.test(d, c); } catch (e) {} line(ok, ch.text); });
+    st.checks.forEach(function (ch) { var ok = false; try { ok = !!ch.test(d, c, ctx); } catch (e) {} line(ok, ch.text); });
     var inh = inherited(cur[0], cur[1]);
     if (inh.length) {
-      var bad = inh.filter(function (ch) { try { return !ch.test(d, c); } catch (e) { return true; } });
+      var bad = inh.filter(function (ch) { try { return !ch.test(d, c, ctx); } catch (e) { return true; } });
       if (bad.length) bad.forEach(function (ch) { line(false, 'Bisher erarbeitet: ' + ch.text); });
       else line(true, 'Alles Bisherige ist noch vorhanden');
     }
@@ -202,6 +216,29 @@
     clearTimeout(timer); timer = setTimeout(preview, 300);
   });
   ta.addEventListener('scroll', function () { $('#hl').scrollTop = ta.scrollTop; $('#hl').scrollLeft = ta.scrollLeft; });
+  $('#bildInput').onchange = function () {
+    var f = this.files[0], inp = this; if (!f) return;
+    var nm = f.name.replace(/[^A-Za-z0-9._-]/g, '_'), rd = new FileReader(), info = $('#bildInfo');
+    info.textContent = '';
+    function save(url) {
+      IMG[nm] = url; var ks = Object.keys(IMG); while (ks.length > 3) delete IMG[ks.shift()];
+      set('imgs', IMG); renderBilder(); preview(); inp.value = '';
+      info.textContent = 'Geladen. Schreibe in src genau: ' + nm;
+    }
+    rd.onload = function () {
+      if (/svg/.test(f.type)) return save(rd.result);
+      var im = new Image();
+      im.onload = function () {
+        var w = Math.min(600, im.width), h = Math.round(im.height * w / im.width), cv = document.createElement('canvas'), cx;
+        cv.width = w; cv.height = h; cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, w, h); cx.drawImage(im, 0, 0, w, h);
+        save(cv.toDataURL('image/jpeg', 0.8));
+      };
+      im.onerror = function () { info.textContent = 'Diese Datei konnte nicht als Bild gelesen werden.'; };
+      im.src = rd.result;
+    };
+    rd.readAsDataURL(f);
+  };
+  $('#bildLoeschen').onclick = function () { IMG = {}; set('imgs', {}); renderBilder(); preview(); $('#bildInfo').textContent = 'Deine geladenen Bilder wurden gelöscht.'; };
   $('#pruefen').onclick = pruefen;
   $('#auswerten').onclick = auswerten;
   $('#zeigen').onclick = function () { $('#loesungCode').textContent = step().loesung; $('#loesung').open = true; };
