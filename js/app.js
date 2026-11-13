@@ -4,9 +4,21 @@
   function $(s) { return document.querySelector(s); }
   function get(k, d) { try { var v = localStorage.getItem(K + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
   function set(k, v) { try { localStorage.setItem(K + k, JSON.stringify(v)); } catch (e) {} }
-  var cur = get('cur', [0, 0]);
+  function storageIndex(m, s) {
+    var st = M[m] && M[m].schritte[s];
+    return st && typeof st.speicher === 'number' ? st.speicher : s;
+  }
+  function stepIndex(m, id) {
+    if (!M[m]) return -1;
+    for (var i = 0; i < M[m].schritte.length; i++) {
+      if (storageIndex(m, i) === id) return i;
+    }
+    return -1;
+  }
+  var savedCur = get('cur', [0, 0]);
+  var cur = Array.isArray(savedCur) ? [savedCur[0], stepIndex(savedCur[0], savedCur[1])] : [0, 0];
   if (!M[cur[0]] || !M[cur[0]].schritte[cur[1]]) cur = [0, 0];
-  function key(m, s) { return m + '-' + s; }
+  function key(m, s) { return m + '-' + storageIndex(m, s); }
   function step() { return M[cur[0]].schritte[cur[1]]; }
   var LV = { M: 'Mindeststandard (M)', R: 'Regelstandard (R)', E: 'Expertenstandard (E)' };
 
@@ -59,6 +71,12 @@
     var c = $('#editor').value, m = { 'beispiel.svg': SAMPLE }, k;
     for (k in IMG) m[k] = IMG[k];
     Object.keys(m).forEach(function (nm) { ['"', "'"].forEach(function (q) { c = c.split(q + nm + q).join(q + m[nm] + q); }); });
+    // srcdoc resolves #fragments against the parent page unless they explicitly target srcdoc.
+    var d = new DOMParser().parseFromString(c, 'text/html'), anchors = d.querySelectorAll('a[href^="#"]');
+    if (anchors.length) {
+      [].forEach.call(anchors, function (a) { a.setAttribute('href', 'about:srcdoc' + a.getAttribute('href')); });
+      c = (d.doctype ? new XMLSerializer().serializeToString(d.doctype) : '') + d.documentElement.outerHTML;
+    }
     return c;
   }
   function preview() { $('#vorschau').srcdoc = previewCode(); }
@@ -68,7 +86,7 @@
   var ORDER = ['M', 'R', 'E', 'T', 'X'];
   function groupIdx(m, g) { var out = []; M[m].schritte.forEach(function (s, i) { if (gOf(s) === g) out.push(i); }); return out; }
   function isDone(m, i) { return get('done:' + key(m, i), false); }
-  function go(m, i) { cur = [m, i]; set('cur', cur); show(); $('#main').focus(); }
+  function go(m, i) { cur = [m, i]; set('cur', [m, storageIndex(m, i)]); show(); $('#main').focus(); }
 
   function renderNav() {
     var nav = $('#nav'); nav.textContent = '';
@@ -82,7 +100,7 @@
         b.type = 'button';
         b.textContent = mod.gruppen[g] + (idx.length > 1 ? ' (' + done + '/' + idx.length + ')' : '') + (done === idx.length ? ' ✓' : '');
         if (mi === cur[0] && gOf(step()) === g) b.setAttribute('aria-current', 'step');
-        b.onclick = function () { var r = get('grp:' + mi + g, idx[0]); go(mi, idx.indexOf(r) > -1 ? r : idx[0]); };
+        b.onclick = function () { var r = stepIndex(mi, get('grp:' + mi + g, storageIndex(mi, idx[0]))); go(mi, idx.indexOf(r) > -1 ? r : idx[0]); };
         li.appendChild(b); ul.appendChild(li);
       });
       nav.appendChild(ul);
@@ -122,7 +140,7 @@
     var lv = $('#level');
     lv.textContent = st.badge || (st.reflexion ? 'Reflexion' : LV[st.level]);
     lv.className = 'badge ' + (st.reflexion ? 'X' : st.test ? 'T' : st.level);
-    set('grp:' + cur[0] + gOf(st), cur[1]); renderFolien();
+    set('grp:' + cur[0] + gOf(st), storageIndex(cur[0], cur[1])); renderFolien();
     $('#lernen').hidden = !!(st.reflexion || st.test);
     $('#testSec').hidden = !st.test;
     $('#reflexion').hidden = !st.reflexion;
